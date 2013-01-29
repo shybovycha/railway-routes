@@ -104,6 +104,32 @@ it('should describe namespaced resource', function (test) {
     test.done();
 });
 
+it('should parse the function parameters as well', function (test) {
+    var paths = [];
+    var map = new routes.Map(fakeApp(paths), fakeBridge());
+
+    function User() {
+        return {
+            id: 15,
+            _id: 17,
+            fubar: function() {
+                return this.id;
+            }
+        };
+    }
+
+    var user1 = User;
+
+    map.resources('users');
+    test.equal(map.pathTo.users(user1), '/users');
+    test.equal(map.pathTo.users, '/users');
+    test.equal(map.pathTo.new_user(), '/users/new');
+    test.equal(map.pathTo.new_user, '/users/new');
+    test.equal(map.pathTo.edit_user(user1), '/users/15/edit');
+    test.equal(map.pathTo.user(user1), '/users/15');
+    test.done();
+});
+
 it('should allow overwrite path and helper', function (test) {
     var paths = [];
     var map = new routes.Map(fakeApp(paths), fakeBridge());
